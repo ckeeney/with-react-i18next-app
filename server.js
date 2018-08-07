@@ -13,37 +13,37 @@ const { i18nInstance } = require('./i18n')
 // init i18next with serverside settings
 // using i18next-express-middleware
 i18nInstance
-  .use(Backend)
-  .use(i18nextMiddleware.LanguageDetector)
-  .init({
-    fallbackLng: 'en',
-    preload: ['en', 'de'], // preload all langages
-    ns: ['common', 'home', 'page2'], // need to preload all the namespaces
-    backend: {
-      loadPath: path.join(__dirname, '/locales/{{lng}}/{{ns}}.json'),
-      addPath: path.join(__dirname, '/locales/{{lng}}/{{ns}}.missing.json')
-    }
-  }, () => {
-    // loaded translations we can bootstrap our routes
-    app.prepare()
-      .then(() => {
-        const server = express()
+    .use(Backend)
+    .use(i18nextMiddleware.LanguageDetector)
+    .init({
+        fallbackLng: 'en',
+        preload: ['en', 'de'], // preload all langages
+        ns: ['common', 'home', 'page2'], // need to preload all the namespaces
+        backend: {
+            loadPath: path.join(__dirname, '/locales/{{lng}}/{{ns}}.json'),
+            addPath: path.join(__dirname, '/locales/{{lng}}/{{ns}}.missing.json')
+        }
+    }, () => {
+        // loaded translations we can bootstrap our routes
+        app.prepare()
+            .then(() => {
+                const server = express()
 
-        // enable middleware for i18next
-        server.use(i18nextMiddleware.handle(i18nInstance))
+                // enable middleware for i18next
+                server.use(i18nextMiddleware.handle(i18nInstance))
 
-        // serve locales for client
-        server.use('/locales', express.static(path.join(__dirname, '/locales')))
+                // serve locales for client
+                server.use('/locales', express.static(path.join(__dirname, '/locales')))
 
-        // missing keys
-        server.post('/locales/add/:lng/:ns', i18nextMiddleware.missingKeyHandler(i18nInstance))
+                // missing keys
+                server.post('/locales/add/:lng/:ns', i18nextMiddleware.missingKeyHandler(i18nInstance))
 
-        // use next.js
-        server.get('*', (req, res) => handle(req, res))
+                // use next.js
+                server.get('*', (req, res) => handle(req, res))
 
-        server.listen(3000, (err) => {
-          if (err) throw err
-          console.log('> Ready on http://localhost:3000')
-        })
-      })
-  })
+                server.listen(3000, (err) => {
+                    if (err) throw err
+                    console.log('> Ready on http://localhost:3000')
+                })
+            })
+    })

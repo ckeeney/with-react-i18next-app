@@ -2,5 +2,6 @@
   "welcome": "welcome to next.js",
   "link": {
     "gotoPage2": "Go to page 2"
-  }
+  },
+  "change_language": "Change language to DE"
 }
